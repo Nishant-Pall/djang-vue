@@ -176,4 +176,4 @@ JWT_AUTH = {
     "JWT_AUTH_HEADER_PREFIX": "Bearer",
 }
 
-CORS_ORIGIN_WHITELIST = ("localhost:8080",)
+CORS_ORIGIN_WHITELIST = ("http://localhost:8080",)
