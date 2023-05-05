@@ -61,19 +61,19 @@ export default class AuthService {
 	// stores the user's access_token, id_token, and a time at
 	// which the access_token will expire in the local storage
 	setSession(authResult) {
-		this.accessToken = authResult.accessToken;
-		this.idToken = authResult.idToken;
-		this.profile = authResult.idTokenPayload;
-		this.expiresAt = authResult.expiresIn * 1000 + new Date().getTime();
+		let expiresAt = JSON.stringify(authResult.expiresIn * 1000 + new Date().getTime());
+		localStorage.setItem("access_token", authResult.accessToken);
+		localStorage.setItem("id_token", authResult.idToken);
+		localStorage.setItem("expires_at", expiresAt);
 		this.authNotifier.emit("authChange", { authenticated: true });
 	}
 
 	// remove the access and ID tokens from the
 	// local storage and emits the authChange event
 	logout() {
-		delete this.accessToken;
-		delete this.idToken;
-		delete this.expiresAt;
+		localStorage.removeItem("access_token");
+		localStorage.removeItem("id_token");
+		localStorage.removeItem("expires_at");
 		this.authNotifier.emit("authChange", false);
 		// navigate to the home route
 		router.replace("/");
@@ -83,16 +83,19 @@ export default class AuthService {
 	isAuthenticated() {
 		// Check whether the current time is past the
 		// access token's expiry time
-		return new Date().getTime() < this.expiresAt;
+		let expiresAt = JSON.parse(localStorage.getItem("expires_at"));
+		return new Date().getTime() < expiresAt;
 	}
 
 	// a static method to get the access token
 	getAuthToken() {
-		return this.accessToken;
+		return localStorage.getItem("access_token");
 	}
 
 	// a method to get the User profile
-	getUserProfile() {
-		return this.profile;
+	getUserProfile(cb) {
+		const accessToken = localStorage.getItem("access_token");
+		if (accessToken) return this.auth0.client.userInfo(accessToken, cb);
+		else return null;
 	}
 }
