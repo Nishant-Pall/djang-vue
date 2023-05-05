@@ -12,7 +12,7 @@
 import AuthService from "./auth/AuthService";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://127.0.0.1:8000/";
 const auth = new AuthService();
 export default {
 	name: "App",
@@ -41,12 +41,19 @@ export default {
 		},
 		async privateMessage() {
 			const url = `${API_URL}/api/private`;
+			console.log(auth.getAuthToken());
+			const config = {
+				headers: {
+					Authorization: `Bearer ${auth.getAuthToken()}`,
+				},
+			};
 			return await axios
-				.get(url, { headers: { Authorization: `Bearer ${auth.getAuthToken()}` } })
+				.get(url, config)
 				.then((response) => {
 					console.log(response.data);
 					this.message = response.data || "";
-				});
+				})
+				.catch((err) => console.log(err));
 		},
 	},
 };

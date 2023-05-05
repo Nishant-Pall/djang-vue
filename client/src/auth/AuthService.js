@@ -35,8 +35,26 @@ export default class AuthService {
 			} else if (err) {
 				console.log(err);
 				alert(`Error: ${err.error}. Check the console for further details.`);
+			} else {
+				this.silentAuth()
+					.then(() => {
+						console.log("user logged in through silent auth");
+					})
+					.catch((err) => {
+						console.log(err);
+					});
 			}
 			router.replace("/");
+		});
+	}
+
+	silentAuth() {
+		return new Promise((resolve, reject) => {
+			this.auth0.checkSession({}, (err, authResult) => {
+				if (err) return reject(err);
+				this.setSession(authResult);
+				resolve();
+			});
 		});
 	}
 
@@ -58,7 +76,7 @@ export default class AuthService {
 		delete this.expiresAt;
 		this.authNotifier.emit("authChange", false);
 		// navigate to the home route
-		// router.replace("/");
+		router.replace("/");
 	}
 
 	// checks if the user is authenticated
