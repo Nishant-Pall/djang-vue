@@ -16,9 +16,9 @@ export default class AuthService {
 	auth0 = new auth0.WebAuth({
 		domain: "dev-dxce6du8dz85qmoo.us.auth0.com",
 		clientID: "9RHZMYrTdoaPgl3mDYHQo7y3W4ttm5O5",
-		redirectUri: "http://localhost:8000/api/private",
+		redirectUri: "http://localhost:8080",
 		audience: "http://djang-vue-auth.com",
-		response_type: "token id_token",
+		responseType: "token id_token",
 		scope: "openid profile",
 	});
 
@@ -58,7 +58,7 @@ export default class AuthService {
 		delete this.expiresAt;
 		this.authNotifier.emit("authChange", false);
 		// navigate to the home route
-		router.replace("/");
+		// router.replace("/");
 	}
 
 	// checks if the user is authenticated
